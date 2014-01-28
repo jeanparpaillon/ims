@@ -1,1 +1,6 @@
 *~
+*.beam
+Mnesia.nonode@nohost/
+deps/
+ebin/
+log/
