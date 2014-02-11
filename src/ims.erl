@@ -12,18 +12,30 @@
 
 -include_lib("occi/include/occi.hrl").
 
--define(BASE, <<"http://localhost:8080">>).
--define(SCHEME_TRANSCODE, 'http://schemas.itea-icare.org/occi/transcoding#').
--define(SCHEME_JOB, 'http://schemas.itea-icare.org/occi/transcoding/job#').
+-define(SRV_NAME, "http://localhost").
+-define(SRV_PORT, 8081).
+-define(SCHEME_TRANSCODE, 'http://schemas.icare-itea.org/occi/transcode#').
+-define(SCHEME_JOB, 'http://schemas.icare-itea.org/occi/transcode/job#').
+
+-export([start/2, stop/1]).
 
 -export([start/0,
 	 stop/0,
 	 loop/0]).
 
 start() ->
+    {ok, Pid} = start(normal, []),
+    register(?MODULE, Pid),
+    erlang:hibernate(?MODULE, loop, []).
+
+stop() ->
+    stop(ok),
+    ?MODULE ! stop.
+
+start(_StartType, _StartArgs) ->
     application:start(occi),
     Mapping = [
-	       {#occi_cid{scheme=?SCHEME_TRANSCODE, term='job', class=kind}, "/jobs/"}
+	       {#occi_cid{scheme=?SCHEME_TRANSCODE, term=job, class=kind}, "/jobs/"}
 	      ],
     Extensions = {extensions,
 		  [{xml, "schemas/occi-transcode.xml"}], 
@@ -31,11 +43,11 @@ start() ->
     Backends = {backends, 
 		[{mnesia, ims_procci_amazon, [], "/"}]},
     Listeners = {listeners, 
-		 [{http, occi_http, [{port, 8080}]}]
+		 [{http, occi_http, [{port, ?SRV_PORT}]}]
 		},
     Handlers = {handlers, 
 		[{pid, self()}]},
-    occi:config([{name, "http://localhost:8080"},
+    occi:config([{name, ?SRV_NAME ++ integer_to_list(?SRV_PORT)},
 		 Extensions, 
 		 Backends,
 		 Listeners,
@@ -43,9 +55,9 @@ start() ->
     register(?MODULE, self()),
     loop().
 
-stop() ->
+stop(State) ->
     application:stop(occi),
-    ?MODULE ! stop.
+    State.
 
 loop() ->
     receive

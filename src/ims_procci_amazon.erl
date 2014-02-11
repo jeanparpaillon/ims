@@ -24,7 +24,7 @@
 
 -behaviour(occi_backend).
 
--include_lib("occi.hrl").
+-include_lib("occi/include/occi.hrl").
 
 %% occi_backend callbacks
 -export([init/1,
@@ -46,20 +46,20 @@ init(_) ->
 terminate(#state{}) ->
     ok.
 
-save(#occi_node{}=Node, State) ->
+save(#occi_node{}=_Node, State) ->
     {ok, State}.
 
-delete(#occi_node{}=Node, State) ->
+delete(#occi_node{}=_Node, State) ->
     {ok, State}.
 
-update(#occi_node{}=Node, State) ->
+update(#occi_node{}=_Node, State) ->
     {ok, State}.
 
-find(#occi_node{}=Req, State) ->
+find(#occi_node{}=_Req, State) ->
     {{ok, []}, State}.
 
 load(#occi_node{}=Req, State) ->
-    {{ok, undefined}, State}.
+    {{ok, Req}, State}.
 
 %%%===================================================================
 %%% Internal functions

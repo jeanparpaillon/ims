@@ -3,19 +3,19 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://schemas.ogf.org/occi occi.xsd " name="Transcoding service"
 		version="1">
-  <occi:kind term="job" scheme="http://schemas.icare-itea.org/occi/transcoding#"
+  <occi:kind term="job" scheme="http://schemas.icare-itea.org/occi/transcode#"
 	     title="Job resource">
     <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="resource" />
     <occi:attribute name="icare.transcoding.input" type="xs:string" title="Input URL" />
     <occi:attribute name="icare.transcoding.progress" type="xs:float" title="Progress (%)" />
     <occi:action term="start"
-		 scheme="http://schemas.itea-icare.org/occi/transcoding/job#"
+		 scheme="http://schemas.icare-itea.org/occi/transcode/job#"
 		 title="Start the job" ></occi:action>
     <occi:action term="pause"
-		 scheme="http://schemas.itea-icare.org/occi/transcoding/job#"
+		 scheme="http://schemas.icare-itea.org/occi/transcode/job#"
 		 title="Pause the job" ></occi:action>
     <occi:action term="cancel"
-		 scheme="http://schemas.itea-icare.org/occi/transcoding/job#"
+		 scheme="http://schemas.icare-itea.org/occi/transcode/job#"
 		 title="Cancel the job" ></occi:action>
   </occi:kind>
 </occi:extension>
