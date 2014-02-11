@@ -13,93 +13,48 @@
 -include_lib("occi/include/occi.hrl").
 
 -define(BASE, <<"http://localhost:8080">>).
--define(SCHEME_INFRA, 'http://schemas.ogf.org/occi/infrastructure#').
--define(SCHEME_NET, 'http://schemas.ogf.org/occi/infrastructure/network#').
--define(SCHEME_NET_IF, 'http://schemas.ogf.org/occi/infrastructure/networkinterface#').
+-define(SCHEME_TRANSCODE, 'http://schemas.itea-icare.org/occi/transcoding#').
+-define(SCHEME_JOB, 'http://schemas.itea-icare.org/occi/transcoding/job#').
 
-% application behaviour callback
--export([start/2,
-	 stop/1]).
-
-% Wrappers
--export([start/0, 
-	 stop/0, 
+-export([start/0,
+	 stop/0,
 	 loop/0]).
-%% Hooks
--export([on_save/1, on_update/2, on_delete/1, on_action/2]).
 
 start() ->
-    {ok, Pid} = start(normal, []),
-    register(?MODULE, Pid),
-    erlang:hibernate(?MODULE, loop, []).
-
-stop() ->
-    stop(ok),
-    ?MODULE ! stop.
-
-start(_StartType, _StartArgs) ->
     application:start(occi),
     Mapping = [
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='compute', class=kind}, 
-		{"/compute/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='storage', class=kind}, 
-		{"/storage/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='storagelink', class=kind}, 
-		{"/storagelink/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='network', class=kind},
-		{"/network/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='networkinterface', class=kind}, 
-		{"/networkinterface/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_NET, term='ipnetwork', class=mixin},
-		{"/ipnetwork/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_NET_IF, term='ipnetworkinterface', class=mixin}, 
-		{"/ipnetworkinterface/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='os_tpl', class=mixin},
-		{"/os_tpl/", mnesia}},
-	       {#occi_cid{scheme=?SCHEME_INFRA, term='resource_tpl', class=mixin},
-		{"/resource_tpl/", mnesia}}
+	       {#occi_cid{scheme=?SCHEME_TRANSCODE, term='job', class=kind}, "/jobs/"}
 	      ],
     Extensions = {extensions,
-		  [{xml, "schemas/occi-infrastructure.xml"}], 
+		  [{xml, "schemas/occi-transcode.xml"}], 
 		  Mapping},
     Backends = {backends, 
-		[{mnesia, occi_backend_mnesia, []}]},
+		[{mnesia, ims_procci_amazon, [], "/"}]},
     Listeners = {listeners, 
 		 [{http, occi_http, [{port, 8080}]}]
 		},
+    Handlers = {handlers, 
+		[{pid, self()}]},
     occi:config([{name, "http://localhost:8080"},
 		 Extensions, 
 		 Backends,
-		 Listeners]),
-    {ok, self()}.
+		 Listeners,
+		 Handlers]),
+    register(?MODULE, self()),
+    loop().
 
-stop(State) ->
+stop() ->
     application:stop(occi),
-    State.
+    ?MODULE ! stop.
 
 loop() ->
     receive
 	stop ->
 	    exit(the_end);
+	{Pid, #occi_action{id=ActionId}, #occi_node{id=Id}} ->
+	    lager:info("Apply action: ~p(~p)~n", [lager:pr(ActionId, ?MODULE),
+						  lager:pr(Id, ?MODULE)]),
+	    Pid ! false;
 	_ ->
 	    erlang:hibernate(?MODULE, loop, [])
     end.
-
-%%%
-%%% Hooks
-%%%
--spec on_save(occi_entity()) -> {reply, occi_entity()} | noreply.
-on_save(Obj) ->
-    {reply, Obj}.
-
--spec on_update(occi_entity(), occi_entity()) -> {reply, occi_entity()} | noreply.
-on_update(_Old, New) ->
-    {reply, New}.
-
--spec on_delete(occi_entity()) -> reply | noreply.
-on_delete(Obj) ->
-    {reply, Obj}.
-
--spec on_action(occi_entity(), any()) -> {reply, occi_entity()} | reply.
-on_action(Obj, _Action) ->
-    {reply, Obj}.
