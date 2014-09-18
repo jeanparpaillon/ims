@@ -1,5 +1,5 @@
 %%% @author Jean Parpaillon <jean.parpaillon@free.fr>
-%%% @copyright (C) 2014, Jean Parpaillon
+%%% @copyright (C) 2013, Jean Parpaillon
 %%% 
 %%% This file is provided to you under the Apache License,
 %%% Version 2.0 (the "License"); you may not use this file
@@ -18,13 +18,13 @@
 %%% @doc
 %%%
 %%% @end
-%%% Created :  11 Feb 2014 by Jean Parpaillon <jean.parpaillon@free.fr>
--module(ims_procci_amazon).
+%%% Created :  18 Sep 2014 by Jean Parpaillon <jean.parpaillon@free.fr>
+-module(ims_backend_ffmpeg).
 -compile({parse_transform, lager_transform}).
 
 -behaviour(occi_backend).
 
--include_lib("occi/include/occi.hrl").
+-include_lib("erocci_core/include/occi.hrl").
 
 %% occi_backend callbacks
 -export([init/1,
@@ -33,33 +33,52 @@
 	 save/2,
 	 delete/2,
 	 find/2,
-	 load/2]).
+	 load/3,
+	 action/3]).
+
+-define(schema, "occi-transcode.xml").
 
 -record(state, {}).
 
 %%%===================================================================
 %%% occi_backend callbacks
 %%%===================================================================
-init(_) ->
-    {ok, #state{}}.
+init(#occi_backend{opts=Opts}) ->
+    case code:priv_dir(ims) of
+	{error, bad_name} ->
+	    {error, "Can not find schema"};
+	Dir ->
+	    Schema = list_to_binary(filename:join([Dir, "schemas", ?schema])),
+	    {ok, [{schemas, [{path, Schema}]}]}
+    end.
+
 
 terminate(#state{}) ->
     ok.
 
-save(#occi_node{}=_Node, State) ->
+save(State, #occi_node{}=Obj) ->
+    lager:info("[~p] save(~p)~n", [?MODULE, Obj#occi_node.id]),
     {ok, State}.
 
-delete(#occi_node{}=_Node, State) ->
+delete(State, #occi_node{}=Obj) ->
+    lager:info("[~p] delete(~p)~n", [?MODULE, Obj#occi_node.id]),
     {ok, State}.
 
-update(#occi_node{}=_Node, State) ->
+update(State, #occi_node{}=Node) ->
+    lager:info("[~p] update(~p)~n", [?MODULE, Node#occi_node.id]),
     {ok, State}.
 
-find(#occi_node{}=_Req, State) ->
-    {{ok, []}, State}.
+find(State, #occi_node{}=Obj) ->
+    lager:info("[~p] find(~p)~n", [?MODULE, Obj#occi_node.id]),
+    {{ok, Obj}, State}.
 
-load(#occi_node{}=Req, State) ->
-    {{ok, Req}, State}.
+load(State, #occi_node{}=Node, _Opts) ->
+    lager:info("[~p] load(~p)~n", [?MODULE, Req#occi_node.id]),
+    {{ok, Node}, State}.
+
+action(State, #uri{}=Id, #occi_action{}=A) ->
+    lager:info("[~p] action(~p, ~p)~n", [?MODULE, Id, A]),
+    {ok, State}.
 
 %%%===================================================================
 %%% Internal functions

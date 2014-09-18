@@ -1,13 +1,16 @@
 {application, ims,
  [
-  {description, ""},
+  {description, "ICARE Media Server"},
   {vsn, "1"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib
                  ]},
-  {mod, { ims, []}},
+  {mod, { ims_app, []}},
   {env, []},
-  {modules, [ims]}
+  {modules, [
+	     ims,
+	     ims_app
+	    ]}
  ]}.
