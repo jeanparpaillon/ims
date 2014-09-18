@@ -1,7 +1,8 @@
 *~
 *.beam
-Mnesia.nonode@nohost/
 deps/
 ebin/
 log/
 erl_crash.dump
+/priv/Mnesia/
+/.rebar/

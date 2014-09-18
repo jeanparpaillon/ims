@@ -43,12 +43,12 @@
 %%%===================================================================
 %%% occi_backend callbacks
 %%%===================================================================
-init(#occi_backend{opts=Opts}) ->
+init(#occi_backend{opts=_Opts}) ->
     case code:priv_dir(ims) of
 	{error, bad_name} ->
 	    {error, "Can not find schema"};
 	Dir ->
-	    Schema = list_to_binary(filename:join([Dir, "schemas", ?schema])),
+	    Schema = filename:join([Dir, "schemas", ?schema]),
 	    {ok, [{schemas, [{path, Schema}]}]}
     end.
 
@@ -73,7 +73,7 @@ find(State, #occi_node{}=Obj) ->
     {{ok, Obj}, State}.
 
 load(State, #occi_node{}=Node, _Opts) ->
-    lager:info("[~p] load(~p)~n", [?MODULE, Req#occi_node.id]),
+    lager:info("[~p] load(~p)~n", [?MODULE, Node#occi_node.id]),
     {{ok, Node}, State}.
 
 action(State, #uri{}=Id, #occi_action{}=A) ->
