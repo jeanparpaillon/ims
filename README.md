@@ -7,7 +7,7 @@ compiling, getting dependancies, etc.  It is mainly based on top of
 erocci framework.  The following dependancies are not handled by rebar
 and must be installed before typing 'make':
 
-* erlang/OTP, version 15b1 or greater
+* erlang/OTP, version 16B01 or greater
 * openssl and headers
 * libxml2 and headers
 * libexpat and headers
