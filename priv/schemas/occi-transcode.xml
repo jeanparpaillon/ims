@@ -3,11 +3,12 @@
 		xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 		xsi:schemaLocation="http://schemas.ogf.org/occi occi.xsd " name="Transcoding service"
 		version="1">
-  <occi:kind term="job" scheme="http://schemas.icare-itea.org/occi/transcode#"
-	     title="Job resource">
+  <occi:kind term="job" scheme="http://schemas.icare-itea.org/occi/transcode#" title="Job resource">
     <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="resource" />
-    <occi:attribute name="icare.transcoding.input" type="xs:string" title="Input URL" />
-    <occi:attribute name="icare.transcoding.progress" type="xs:float" title="Progress (%)" />
+    <occi:attribute name="icare.transcode.input" type="xs:string" title="Input URL" use="required" />
+    <occi:attribute name="icare.transcode.output" type="xs:string" title="Output URL" />
+    <occi:attribute name="icare.transcode.notification" type="xs:string" title="URL for notification (webhook, etc)" />
+    <occi:attribute name="icare.transcode.progress" type="xs:float" title="Progress (%)" immutable="true" />
     <occi:action term="start"
 		 scheme="http://schemas.icare-itea.org/occi/transcode/job#"
 		 title="Start the job" ></occi:action>
@@ -18,4 +19,20 @@
 		 scheme="http://schemas.icare-itea.org/occi/transcode/job#"
 		 title="Cancel the job" ></occi:action>
   </occi:kind>
+
+  <occi:kind term="user" scheme="http://schemas.icare-itea.org/occi/transcode#" title="User">
+    <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="resource" />
+    <occi:attribute name="icare.transcode.uid" type="xs:string" title="User ID" use="required" />
+    <occi:attribute name="icare.transcode.email" type="xs:string" title="User email" />
+  </occi:kind>
+
+  <occi:kind term="jobOwner" scheme="http://schemas.icare-itea.org/occi/transcode#"
+	     title="Job Owner: link from job to user">
+    <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="link" />
+  </occi:kind>
+  
+  <occi:mixin term="zencodeCreds" scheme="http://schemas.icare-itea.org/occi/transcode#"
+	      title="Zencoder User Credentials" >
+    <occi:attribute name="icare.transcode.zencoderKey" type="xs:string" title="Zencoder API Key" use="required" />
+  </occi:mixin>
 </occi:extension>
