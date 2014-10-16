@@ -9,6 +9,7 @@ otp_release:
 before_install:
 - sudo apt-get install libssl-dev libxml2-dev libexpat1-dev
 deploy:
+  edge: true
   provider:
     provider: cloudfoundry
   api: https://api.run.pivotal.io
