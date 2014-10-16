@@ -1,5 +1,7 @@
 # Icare Media Server
 
+[Travis-CI](http://travis-ci.org/jeanparpaillon/ims) :: ![Travis-CI](https://secure.travis-ci.org/jeanparpaillon/ims.png)
+
 ## Dependancies
 
 IMS is written in erlang. It uses the very good rebar tool for
