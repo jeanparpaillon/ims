@@ -1,0 +1,6 @@
+applications:
+  - name: ims
+    memory: 512M
+    buildpack: https://github.com/archaelus/heroku-buildpack-erlang
+    command: ./start.sh
+    
