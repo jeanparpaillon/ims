@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<occi:extension xmlns:occi="http://schemas.ogf.org/occi"
+		xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+		xsi:schemaLocation="http://schemas.ogf.org/occi occi.xsd " name="Streaming service"
+		version="1">
+  <occi:kind term="pipeline" scheme="http://schemas.icare-itea.org/stream#" title="Media pipe">
+    <!--
+	Describe a user media pipeline
+    -->
+    <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="resource" />
+    <occi:action term="start"
+		 scheme="http://schemas.icare-itea.org/stream/pipeline#"
+		 title="Start the pipeline" ></occi:action>
+    <occi:action term="pause"
+		 scheme="http://schemas.icare-itea.org/transcode/pipeline#"
+		 title="Pause the pipeline" ></occi:action>
+  </occi:kind>
+
+  <occi:kind term="element" scheme="http://schemas.icare-itea.org/stream#" title="Media pipeline element">
+    <!--
+	Describe an element of a pipeline.
+	Src points to a pipeline, or another element
+	Target points to a pipe
+    -->
+    <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="link" />
+  </occi:kind>
+
+
+  <occi:kind term="pipe" scheme="http://schemas.icare-itea.org/stream#" title="Media pipeline plugin">
+    <!--
+	Describe a media transformation service
+    -->
+    <occi:parent scheme="http://schemas.ogf.org/occi/core#" term="resource" />
+  </occi:kind>  
+</occi:extension>
